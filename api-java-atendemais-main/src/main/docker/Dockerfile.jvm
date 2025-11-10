@@ -6,9 +6,9 @@ WORKDIR /app
 # Copia TODO o projeto para o container
 COPY . .
 
-# Agora o pom.xml está em /app/atendemais-hcfmusp-java/pom.xml
-# Navega para o diretório do projeto Maven
-WORKDIR /app/atendemais-hcfmusp-java
+# O caminho correto baseado na estrutura do seu repositório
+# O projeto está em api-java-atendemais-main/atendemais-hcfmusp-java/
+WORKDIR /app/api-java-atendemais-main/atendemais-hcfmusp-java
 
 # Baixa as dependências e compila (agora no diretório correto)
 RUN mvn dependency:go-offline -B
@@ -20,7 +20,7 @@ FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 
 # Copia APENAS os artefatos compilados do estágio 'build'
-COPY --from=build /app/atendemais-hcfmusp-java/target/quarkus-app/ .
+COPY --from=build /app/api-java-atendemais-main/atendemais-hcfmusp-java/target/quarkus-app/ .
 
 # Expõe a porta
 EXPOSE 8080
