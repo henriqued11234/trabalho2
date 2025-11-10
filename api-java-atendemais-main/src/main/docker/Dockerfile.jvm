@@ -3,13 +3,14 @@ FROM maven:3.9-eclipse-temurin-21 AS build
 
 WORKDIR /app
 
-# Copia TUDO de uma vez do contexto atual
+# Copia TODO o projeto para o container
 COPY . .
 
-# Navega para o diretório do projeto Java
+# Agora o pom.xml está em /app/atendemais-hcfmusp-java/pom.xml
+# Navega para o diretório do projeto Maven
 WORKDIR /app/atendemais-hcfmusp-java
 
-# Baixa as dependências e compila
+# Baixa as dependências e compila (agora no diretório correto)
 RUN mvn dependency:go-offline -B
 RUN mvn package -B -Dquarkus.package.type=fast-jar -DskipTests
 
@@ -18,11 +19,11 @@ FROM eclipse-temurin:21-jre-alpine
 
 WORKDIR /app
 
-# Copia os artefatos compilados
+# Copia APENAS os artefatos compilados do estágio 'build'
 COPY --from=build /app/atendemais-hcfmusp-java/target/quarkus-app/ .
 
 # Expõe a porta
 EXPOSE 8080
 
-# Comando para Render (porta dinâmica)
+# Comando para iniciar a aplicação (adaptado para Render)
 CMD java -Dquarkus.http.port=${PORT:-8080} -jar quarkus-run.jar
